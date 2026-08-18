@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitcount+Ink:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap");
+
+body {
+  background-color: rgb(40, 38, 38);
+  color: white;
+  text-align: center;
+}
+
+.main-heading {
+  font-family: "Bitcount Ink", system-ui;
+  font-size: 50px;
+}
+
+.sub-heading{
+    font-family: "Bitcount Ink", system-ui;
+    font-size: 30px;
+
+}
+
+.get-started-btn {
+  font-family: "Oswald", sans-serif;
+  color: rgb(170, 166, 166);
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.get-started-btn:hover {
+  color: white;
+  font-size: 30px;
+  text-decoration: underline plum;
+}
+
+.sub-head {
+  font-size: 20px;
+  color: rgb(160, 154, 154);
+  font-family: "Oswald", sans-serif;
+}
+
+.signup-inputs {
+  height: 20px;
+}
+
+.footer-links {
+  color: plum;
+  text-decoration: none;
+}
+
+.footer-links:hover {
+  text-decoration: underline white;
+}
+
+.common-links {
+  font-family: "Oswald", sans-serif;
+  font-size: 28px;
+  padding: 20px;
+  color: rgb(121, 120, 120);
+  background: none;
+  border: none;
+  text-decoration: none;
+}
+
+.common-links:hover {
+  text-decoration: underline plum ;
+  text-underline-offset: 10px;
+}
+
+
+.comm-links{
+  font-size: 25px;
+  color: rgb(143, 140, 140);
+  padding: 15px;
+  text-decoration: underline white 5px;
+  text-underline-offset: 10px;
+
+  
+}
+.comm-links:hover{
+  text-decoration: underline plum 5px;
+  
+}
+
+.create-comm-btn{
+
+  text-decoration: underline white 10px;
+  text-underline-offset: 10px;
+  border: none;
+  background: none;
+  color: rgb(122, 120, 120);
+  font-size: 30px;
+
+
+}
+
+.create-comm-btn:hover{
+
+    text-decoration: underline plum 10px;
+
+}
+
+
+.homepage-margin{
+
+  margin-top: 3%;
+
+}
+
+.get-started-margin{
+  margin-top: 12%;
+}
