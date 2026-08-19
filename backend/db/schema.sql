@@ -30,7 +30,8 @@ CREATE TABLE public.community (
     community_passkey text NOT NULL,
     community_description character varying(250) NOT NULL,
     community_bg_image text NOT NULL,
-    created_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+    created_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    community_type text NOT NULL
 );
 
 
@@ -83,7 +84,8 @@ CREATE TABLE public.users (
     username text NOT NULL,
     hash_password text NOT NULL,
     profile_picture text NOT NULL,
-    nickname text NOT NULL
+    nickname text NOT NULL,
+    joined_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 
@@ -207,4 +209,5 @@ ALTER TABLE ONLY public.members
 INSERT INTO public.schema_migrations (version) VALUES
     ('001'),
     ('002'),
-    ('003');
+    ('003'),
+    ('004');

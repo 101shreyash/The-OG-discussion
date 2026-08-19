@@ -7,7 +7,7 @@ function Homepage() {
 
     <Link to="/createcommunity" className="common-links">Create Community</Link>
     <Link to="/explorecommunity" className="common-links">Explore Communities</Link>
-    <Link className="common-links">Profile</Link>
+    <Link to="/profile" className="common-links">Profile</Link>
     <button className="common-links">Logout</button>
     
 

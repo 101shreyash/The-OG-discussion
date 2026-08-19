@@ -82,19 +82,23 @@ body {
 
 .create-comm-btn{
 
-  text-decoration: underline white 10px;
-  text-underline-offset: 10px;
+  background-color: plum;
+  height: 60px;
+  width: 10%;
   border: none;
-  background: none;
-  color: rgb(122, 120, 120);
-  font-size: 30px;
+  cursor: pointer;
+
 
 
 }
 
 .create-comm-btn:hover{
 
-    text-decoration: underline plum 10px;
+  background-color: rgb(237, 62, 237);
+  height: 60px;
+  width: 10%;
+   border : none; 
+
 
 }
 
@@ -107,4 +111,24 @@ body {
 
 .get-started-margin{
   margin-top: 12%;
+}
+
+
+.click-btn{
+
+  background-color: plum;
+  height: 40px;
+  width: 80px;
+  border: none;
+  cursor: pointer;
+
+}
+
+.click-btn:hover{
+
+  background-color: rgb(237, 62, 237);
+  height: 40px;
+  width: 80px;
+   border : none; 
+
 }

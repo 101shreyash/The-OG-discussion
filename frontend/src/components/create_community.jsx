@@ -9,7 +9,9 @@ function CreateCommunity() {
     let {register , handleSubmit} = useForm();
 
     function AfterCreate(data) {
+        console.log(data);
         
+
         const bgimage = data.bgimage[0]        
         alert("Sucessfully Created")
       return  navigate("/homepage")
@@ -31,7 +33,7 @@ function CreateCommunity() {
             <select required {...register("type")}>
 
                 <option value=""  hidden>Select Type</option>
-                <option>Gym And Fitness </option>
+                <option>Fitness And Health</option>
                 <option>EntertainMent </option>
                 <option>Yoga And Health</option>
                 <option>Anime</option>
@@ -40,10 +42,15 @@ function CreateCommunity() {
                 <option>Engineering</option>
                 <option>Physics</option>
                 <option>Chemistry</option>
+                <option>Biology</option>
+                <option>Computer Science</option>
+                <option>Mathematics</option>
                 <option>Astronomy</option>
                 <option>Music Intruments</option>
-                <option>Music</option>
-                <option>Weather</option>
+                <option>Musics And Beats</option>
+                <option>Weather And Environment</option>
+                <option>Politics</option>
+                <option>Media And News</option>
                 <option>Plants And Gardening</option>
                 <option>Combat Sports</option>
                 <option>General Sports</option>
