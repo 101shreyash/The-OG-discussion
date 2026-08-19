@@ -83,8 +83,8 @@ CREATE TABLE public.users (
     userid integer NOT NULL,
     username text NOT NULL,
     hash_password text NOT NULL,
-    profile_picture text NOT NULL,
-    nickname text NOT NULL,
+    profile_picture text,
+    nickname text,
     joined_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -210,4 +210,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('001'),
     ('002'),
     ('003'),
-    ('004');
+    ('004'),
+    ('005');
