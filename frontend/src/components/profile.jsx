@@ -28,9 +28,10 @@ function UserProfile() {
     
     <form onSubmit={handleSubmit(AfterSearch)}>
     <h1 className="sub-head">Search Your Friends Username And See Thier Communities </h1>
-        <input style={{height : "30px", width : "15%"}} type="search" placeholder="Search Username" {...register("frinedusername")} />
+        <input style={{height : "30px", width : "15%"}} type="search" placeholder="Search Username" {...register("frinedusername")} required/>
         &nbsp; &nbsp;
-        <button>Search</button>
+    <button>Search</button>
+
     </form>
     
     </div>

@@ -7,6 +7,8 @@ import "./index.css"
 import { Route , Routes } from "react-router-dom";
 import ExploreCommunity from "./components/explore_community";
 import UserProfile from "./components/profile";
+import AskName from "./components/askname";
+import ProfilePic from "./components/profilepic";
 
 function App() {
 
@@ -18,6 +20,8 @@ function App() {
  <Route path="/"  element = {<Getstarted/>}/>
  <Route path="/signup"  element = {<Signup/>}/>
  <Route path="/login"  element = {<Login/>}/>
+ <Route path="/askname"  element = {<AskName/>}/>
+ <Route path="/profilepic"  element = {<ProfilePic/>}/>
  <Route path="/homepage"  element = {<Homepage/>}/>
  <Route path="/createcommunity"  element = {<CreateCommunity/>}/>
  <Route path="/explorecommunity"  element = {<ExploreCommunity/>}/>

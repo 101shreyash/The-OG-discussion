@@ -132,3 +132,22 @@ body {
    border : none; 
 
 }
+
+.skip-btn{
+
+  font-size: 40px;
+  text-decoration: underline white;
+  text-underline-offset: 12px;
+  color: plum;
+
+}
+
+.skip-btn:hover{
+
+  color: white;
+  font-size: 40px;
+  text-decoration: underline plum;
+  text-underline-offset: 12px;
+
+}
+

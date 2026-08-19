@@ -12,7 +12,7 @@ function Login() {
 
         console.log(data);
         alert("Login Sucessfull")
-        navigate("/homepage")
+        navigate("/askname")
         
         
     }
