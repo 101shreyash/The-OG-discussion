@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import {useForm} from "react-hook-form"
-
+import { toast } from 'react-hot-toast';
 
 function Login() {
 
@@ -11,14 +11,14 @@ function Login() {
     function AfterSubmit(data) {
 
         console.log(data);
-        alert("Login Sucessfull")
+       toast.success("Login Sucessfull" , {duration : 1000})
         navigate("/askname")
         
         
     }
 
 
-    return <>
+    return <div style={{marginTop : "6%"}}>
     
     <h1>Login Now To Get Started</h1>
     <form onSubmit={handleSubmit(AfterSubmit)}>
@@ -30,7 +30,7 @@ function Login() {
     <p>New Here? <Link to="/signup" className="footer-links">Signup Instead</Link></p>
     
     
-    </>
+    </div>
     
 }
 
