@@ -5,24 +5,26 @@ import "dotenv/config";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pool from "./db.js";
+import multer from "multer";
 
 const app = express();
 const port = process.env.SERVER_PORT || 8001;
+const upload = multer({ dest: "profilepic" });
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({
-  origin : "http://localhost:5173",
-  credentials : true
-}))
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 app
   .route("/signup")
 
   .post((req, res) => {
-    
-
     const username = req.body.username.toLowerCase(); //transformation
     const password = req.body.password;
 
@@ -197,31 +199,56 @@ app
     }
 
     async function DbCall() {
-
       try {
-        await pool.query(
-          "UPDATE users SET nickname = $1 WHERE userid = $2;",
-          [nickname, userid],
-        );
+        await pool.query("UPDATE users SET nickname = $1 WHERE userid = $2;", [
+          nickname,
+          userid,
+        ]);
 
         return res.status(200).json({
-          success: false,
+          success: true,
           message: `Welcome to the platform ${nickname}`,
         });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        console.log(error);
+      }
+    } // db call func scope ends here
 
-      } 
-      
-      catch (error) {
+    DbCall();
+  });
 
-            res.status(500).json({
-              success : false,
-              message : "Server Error"
-            })
-            console.log(error);      
+app
+  .route("/uploadprofile")
+
+  .post(jwtvalidation, upload.single("profilepic"), (req, res) => {
+    const ppurl = req.file.filename;
+    const userid = req.user.userid
+
+    async function DbCall() {
+
+      try {
+
+        await pool.query("UPDATE users SET profile_picture = $1 WHERE userid = $2" , [ppurl , userid])
+         return res.status(200).json({
+          success: true,
+          message: `Profile Picture Uploaded`,
+        });
+
 
       }
-
-    } // db call func scope ends here 
+      
+      catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        console.log(error);
+      }
+    }
 
     DbCall();
   });

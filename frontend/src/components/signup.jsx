@@ -36,7 +36,8 @@ function Signup() {
 
                 if (msg.success === false && msg.message === "Username shouldn't Contain Special Characters And Spaces") {
 
-                    return toast.error("Username shouldn't Contain Special Characters And Spaces",
+                    reset();
+                   return toast.error("Username shouldn't Contain Special Characters And Spaces",
                     {duration: 2500})
 
 

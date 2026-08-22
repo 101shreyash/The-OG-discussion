@@ -1,17 +1,59 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
+import { toast } from 'react-hot-toast';
+
 
 function AskName() {
 
-
-    let { register, handleSubmit } = useForm();
+    let { register, handleSubmit , reset } = useForm();
     let navigate = useNavigate();
 
 
     function AfterSubmit(data) {
 
-        console.log(data);
-        navigate("/profilepic")
+        console.log(data.nickname);
+
+        async function askNameCall() {
+            
+         const result = await fetch("http://localhost:8001/askname" , {
+            
+            method : "POST",
+            credentials : "include",
+            body : JSON.stringify({nickname : data.nickname}),
+            headers : ({
+                'Content-Type' : 'application/json'
+            })
+
+           })
+
+           const msg = await result.json()
+
+           if (result.status === 401 && msg.message === "Session Expired Please login again" && msg.success === false) {
+
+            toast.error("Session Expired Please Login Again" , {duration : 1800})
+           return navigate("/login")
+            
+            
+           }
+
+             if (result.status === 400 && msg.message === "Nickname Shouldn't contain special characters and Numbers" && msg.success === false) {
+
+                toast.error("Nickname Shouldn't contain special characters and Numbers" , {duration : 1800})
+                return reset();
+                
+             }   
+             
+             if (result.status === 200 && msg.success === true) {
+
+               return navigate("/profilepic" , {state : data.nickname})
+                
+             }
+
+        }
+
+        askNameCall()
+
+        // navigate("/profilepic")
 
     }
 
