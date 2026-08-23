@@ -1,4 +1,4 @@
-import express from "express";
+import express, { json } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -10,7 +10,7 @@ import multer from "multer";
 const app = express();
 const port = process.env.SERVER_PORT || 8001;
 const upload = multer({ dest: "profilepic" });
-app.use("/profilepic" , express.static("profilepic/"))
+app.use("/profilepic", express.static("profilepic/"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -180,11 +180,41 @@ const jwtvalidation = (req, res, next) => {
 };
 
 app
+  .route("/checknickname")
+
+  .get(jwtvalidation, (req, res) => {
+    async function DbCall() {
+      const userid = req.user.userid;
+      try {
+        const result = await pool.query(
+          "SELECT nickname FROM  users WHERE userid = $1;",
+          [userid],
+        );
+
+        if (result.rowCount > 0) {
+          res.status(200).json({
+            success: true,
+            message: "No need for nickname",
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+
+    DbCall();
+  });
+
+app
   .route("/askname")
 
   .post(jwtvalidation, (req, res) => {
-    const nickname = req.body.nickname;
     const userid = req.user.userid;
+    const nickname = req.body.nickname;
 
     if (!nickname) {
       return res.status(400).json({
@@ -219,6 +249,54 @@ app
         console.log(error);
       }
     } // db call func scope ends here
+
+    DbCall();
+  });
+
+app
+  .route("/checkprofilepic")
+
+  .get(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+
+    // 13b491cae3c2f22a69cfb47925cba5d2 this filename refers to image that says no profilepicture
+
+    async function DbCall() {
+      try {
+        const result = await pool.query(
+          "SELECT profile_picture FROM users WHERE userid = $1",
+          [userid],
+        );
+        const ppurl = result.rows[0].profile_picture
+
+            if (ppurl === "13b491cae3c2f22a69cfb47925cba5d2" === true ){
+              // is noprofile picture true  ?? then show the ui saying upload profilepic else dont show ui   
+            return res.status(200).json({
+              success : true,
+              message : "Display Add profilePicture UI"
+            })  
+              
+            }   
+            
+            return res.status(200).json({
+              success : true,
+              message : "Don't show UI"
+            })
+            
+
+
+      } 
+      
+      catch (error) {
+
+        console.log(error);
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+
+    }
 
     DbCall();
   });
@@ -260,22 +338,16 @@ app
 
     async function DbCall() {
       try {
-
         const result = await pool.query(
           "SELECT username , profile_picture , nickname , joined_date FROM users WHERE userid = $1;",
           [userid],
         );
 
-       return res.status(200).json({
-          success : true,
-          message : result.rows[0]
-        })
-      
-
-
-      }
-      
-      catch (error) {
+        return res.status(200).json({
+          success: true,
+          message: result.rows[0],
+        });
+      } catch (error) {
         res.status(500).json({
           success: false,
           message: "Server Error",
@@ -286,6 +358,60 @@ app
 
     DbCall();
   });
+
+
+
+app.route("/friendsprofile/:username")
+
+.get(jwtvalidation , (req,res) => {
+
+  const username = req.params.username.toLowerCase()
+
+ 
+  async function DbCall() {
+
+    try {
+
+     const result =  await pool.query("SELECT username , profile_picture , nickname FROM users WHERE username = $1" , [username])
+
+     
+     if (result.rowCount === 0) {
+       
+       return res.status(404).json({
+         success : false,
+         message : "Profile not found enter valid username"
+        })
+        
+      }
+      
+      return res.status(200).json({
+        success : true,
+       message : result.rows[0]
+
+      })
+
+      
+    }
+    
+    
+    catch (error) {
+
+      res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        console.log(error);
+      
+    }
+    
+  }
+
+  DbCall();
+
+
+
+
+})
 
 app.listen(port, () => {
   console.log("Server Started");

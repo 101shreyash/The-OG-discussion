@@ -1,10 +1,10 @@
 import { useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {toast} from "react-hot-toast";
-
-
+import { useEffect } from "react";
 
 function ProfilePic() {
+
 
     let navigate = useNavigate();
     let { register, handleSubmit, reset } = useForm();
@@ -12,6 +12,45 @@ function ProfilePic() {
     const asknameState = useLocation();
     
 
+
+     async function checkProfilePic() {
+
+        try {
+
+       const result = await fetch("http://localhost:8001/checkprofilepic" , {
+                credentials : "include",
+                method : "GET",
+                headers : ({
+                    'Content-Type' : 'application/json'
+                })
+            })
+
+            const msg = await result.json()
+            console.log(msg);
+            
+
+            if (msg.success === true && msg.message === `Don't show UI`) {
+                
+                navigate("/profile")
+
+            }
+            
+            
+        }
+        
+        catch (error) {
+
+            toast.error(error.message , {duration : 1200})
+            
+        }
+        
+     }
+
+     useEffect(() => {
+
+        checkProfilePic();
+
+     } , [])
 
     function AfterSubmit(data) {
 

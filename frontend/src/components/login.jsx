@@ -36,12 +36,9 @@ function Login() {
 
                 if (result.status === 200 && msg.success === true && msg.message === "Logged In Sucessfull") {
 
-                    toast.success("Logged In Sucessfull", { duration: 1000 })
                     return navigate("/askname")
 
                 }
-
-
 
             }
 
@@ -54,7 +51,6 @@ function Login() {
         }
 
         LoginCall();
-
 
     }
 

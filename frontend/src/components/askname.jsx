@@ -1,12 +1,51 @@
 import { useForm } from "react-hook-form";
 import {useNavigate } from "react-router-dom";
 import { toast } from 'react-hot-toast';
-
+import { useEffect } from "react";
 
 function AskName() {
 
     let { register, handleSubmit , reset } = useForm();
     let navigate = useNavigate();
+
+    async function checkNickname() {
+
+        try {
+
+            const result = await fetch("http://localhost:8001/checknickname" , {
+                credentials : "include",
+                method : "GET",
+                headers : ({
+                    'Content-Type' : 'application/json'
+                })
+            })
+
+             const msg = await result.json()
+
+             if (msg.success === true && msg.message === 'No need for nickname' && result.status === 200) {
+                
+                navigate("/profilepic")
+                
+             }
+             
+            
+        } 
+        
+        catch (error) {
+
+            toast.error(error.message)
+            
+        }
+        
+    }
+
+
+    useEffect(() => {
+
+        checkNickname();
+        
+
+    } , [])
 
 
     function AfterSubmit(data) {
