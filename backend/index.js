@@ -10,6 +10,7 @@ import multer from "multer";
 const app = express();
 const port = process.env.SERVER_PORT || 8001;
 const upload = multer({ dest: "profilepic" });
+app.use("/profilepic" , express.static("profilepic/"))
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -55,8 +56,9 @@ app
         const hashedpassword = await bcrypt.hash(password, 12);
 
         await pool.query(
-          "INSERT INTO users (username,hash_password) VALUES ($1,$2)",
-          [username, hashedpassword],
+          "INSERT INTO users (username,hash_password,profile_picture) VALUES ($1,$2,$3)",
+          [username, hashedpassword, "13b491cae3c2f22a69cfb47925cba5d2"],
+          // in case where user skips to add profile picture a default no profilepic image will be there
         );
         return res.status(200).json({
           success: true,
@@ -225,18 +227,50 @@ app
   .route("/uploadprofile")
 
   .post(jwtvalidation, upload.single("profilepic"), (req, res) => {
-    const ppurl = req.file.filename;
-    const userid = req.user.userid
+    const ppurl = req.file?.filename;
+    const userid = req.user.userid;
 
     async function DbCall() {
-
       try {
-
-        await pool.query("UPDATE users SET profile_picture = $1 WHERE userid = $2" , [ppurl , userid])
-         return res.status(200).json({
+        await pool.query(
+          "UPDATE users SET profile_picture = $1 WHERE userid = $2",
+          [ppurl, userid],
+        );
+        return res.status(200).json({
           success: true,
           message: `Profile Picture Uploaded`,
         });
+      } catch (error) {
+        res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        console.log(error);
+      }
+    }
+
+    DbCall();
+  });
+
+app
+  .route("/myprofile")
+
+  .get(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+
+    async function DbCall() {
+      try {
+
+        const result = await pool.query(
+          "SELECT username , profile_picture , nickname , joined_date FROM users WHERE userid = $1;",
+          [userid],
+        );
+
+       return res.status(200).json({
+          success : true,
+          message : result.rows[0]
+        })
+      
 
 
       }

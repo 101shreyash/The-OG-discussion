@@ -46,7 +46,6 @@ function ProfilePic() {
                 return navigate("/profile")
 
                }
-               
 
             }
             

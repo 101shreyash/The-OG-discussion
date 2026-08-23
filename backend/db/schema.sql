@@ -156,14 +156,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: users users_profile_picture_key; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.users
-    ADD CONSTRAINT users_profile_picture_key UNIQUE (profile_picture);
-
-
---
 -- Name: users users_username_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -211,4 +203,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('002'),
     ('003'),
     ('004'),
-    ('005');
+    ('005'),
+    ('006');
