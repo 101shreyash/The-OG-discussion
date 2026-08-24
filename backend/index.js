@@ -9,7 +9,12 @@ import multer from "multer";
 
 const app = express();
 const port = process.env.SERVER_PORT || 8001;
+
+// upload profile picture and community backgrounc picture in diff folder
 const upload = multer({ dest: "profilepic" });
+const communityBgImage = multer({ dest: "communitybgimg" });
+
+// serving profilepic and community background picture
 app.use("/profilepic", express.static("profilepic/"));
 
 app.use(express.urlencoded({ extended: true }));
@@ -267,35 +272,27 @@ app
           "SELECT profile_picture FROM users WHERE userid = $1",
           [userid],
         );
-        const ppurl = result.rows[0].profile_picture
+        const ppurl = result.rows[0].profile_picture;
 
-            if (ppurl === "13b491cae3c2f22a69cfb47925cba5d2" === true ){
-              // is noprofile picture true  ?? then show the ui saying upload profilepic else dont show ui   
-            return res.status(200).json({
-              success : true,
-              message : "Display Add profilePicture UI"
-            })  
-              
-            }   
-            
-            return res.status(200).json({
-              success : true,
-              message : "Don't show UI"
-            })
-            
+        if ((ppurl === "13b491cae3c2f22a69cfb47925cba5d2") === true) {
+          // is noprofile picture true  ?? then show the ui saying upload profilepic else dont show ui
+          return res.status(200).json({
+            success: true,
+            message: "Display Add profilePicture UI",
+          });
+        }
 
-
-      } 
-      
-      catch (error) {
-
+        return res.status(200).json({
+          success: true,
+          message: "Don't show UI",
+        });
+      } catch (error) {
         console.log(error);
         res.status(500).json({
           success: false,
           message: "Server Error",
         });
       }
-
     }
 
     DbCall();
@@ -359,59 +356,202 @@ app
     DbCall();
   });
 
+app
+  .route("/friendsprofile/:username")
 
+  .get(jwtvalidation, (req, res) => {
+    const username = req.params.username.toLowerCase();
 
-app.route("/friendsprofile/:username")
+    async function DbCall() {
+      try {
+        const result = await pool.query(
+          "SELECT username , profile_picture , nickname FROM users WHERE username = $1",
+          [username],
+        );
 
-.get(jwtvalidation , (req,res) => {
+        if (result.rowCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Profile not found enter valid username",
+          });
+        }
 
-  const username = req.params.username.toLowerCase()
-
- 
-  async function DbCall() {
-
-    try {
-
-     const result =  await pool.query("SELECT username , profile_picture , nickname FROM users WHERE username = $1" , [username])
-
-     
-     if (result.rowCount === 0) {
-       
-       return res.status(404).json({
-         success : false,
-         message : "Profile not found enter valid username"
-        })
-        
-      }
-      
-      return res.status(200).json({
-        success : true,
-       message : result.rows[0]
-
-      })
-
-      
-    }
-    
-    
-    catch (error) {
-
-      res.status(500).json({
+        return res.status(200).json({
+          success: true,
+          message: result.rows[0],
+        });
+      } catch (error) {
+        res.status(500).json({
           success: false,
           message: "Server Error",
         });
         console.log(error);
-      
+      }
     }
-    
-  }
 
-  DbCall();
+    DbCall();
+  });
 
+app
+  .route("/logout")
 
+  .delete((req, res) => {
+    return res.status(200).clearCookie("jwt").json({
+      success: true,
+      message: "Logout sucessfull",
+    });
+  });
 
+// ----------------------- Create Community -----------------------------
 
-})
+app
+  .route("/createcommunity")
+
+  .post(jwtvalidation, communityBgImage.single("commbg"), (req, res) => {
+    const userid = req.user.userid;
+    const communityName = req.body.communityname;
+    const communityDescription = req.body.description?.toLowerCase();
+    const communityType = req.body.type;
+    const bgImageUrl = req.file?.filename;
+    const plainPasskey = req.body.passkey;
+
+    console.log("imageurl", bgImageUrl);
+
+    if (!communityName) {
+      return res.status(400).json({
+        success: false,
+        message: "Community Name is required!",
+      });
+    }
+
+    if (!communityDescription) {
+      return res.status(400).json({
+        success: false,
+        message: "Description is required!",
+      });
+    }
+
+    if (!communityType) {
+      return res.status(400).json({
+        success: false,
+        message: "Community Type is required!",
+      });
+    }
+
+    if (/^[a-zA-Z ]+$/.test(communityName) === false) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Community Name cannot not include numbers and special characters",
+      });
+    }
+
+    if (communityName.length < 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Community name should be at least of 5 characters or more",
+      });
+    }
+
+    if (communityDescription.length > 250) {
+      return res.status(400).json({
+        success: false,
+        message: "Community Description too Long!",
+      });
+    }
+
+    if (!plainPasskey) {
+      return res.status(400).json({
+        success: false,
+        message: "Community Passkey is required!",
+      });
+    }
+
+    if (plainPasskey.length < 5) {
+      return res.status(400).json({
+        success: false,
+        message: "Passkey length should at least be of 5 characters or more",
+      });
+    }
+
+    if (!bgImageUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Backrgound Image is required!",
+      });
+    }
+
+    async function DbCall() {
+      const hashedPasskey = await bcrypt.hash(plainPasskey, 12);
+
+      try {
+        await pool.query(
+          " INSERT INTO community (userid , community_name , community_passkey , community_description , community_bg_image , community_type) VALUES ($1,$2,$3,$4,$5,$6);",
+          [
+            userid,
+            communityName,
+            hashedPasskey,
+            communityDescription,
+            bgImageUrl,
+            communityType,
+          ],
+        );
+
+        return res.status(200).json({
+          success: true,
+          message: "Community Created Sucessfully",
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    } // db call scope end here
+
+    DbCall();
+  }); // create community route ends here
+
+app
+  .route("/viewyourcommunity")
+
+  .get(jwtvalidation , (req, res) => {
+
+    const userid = req.user.userid;
+
+    async function DbCall() {
+
+      try {
+
+        const result = await pool.query("SELECT community_name , community_id  FROM community WHERE userid = $1" , [userid])
+
+        if (result.rowCount <1) {
+
+          return res.status(404).json({
+            success : false,
+            message : "No community Found Try Creating Some"
+          })
+        } 
+        
+       return res.status(200).json({
+          success : true,
+          message : result.rows
+        })
+
+      }
+      
+      catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+
+    DbCall();
+  });
 
 app.listen(port, () => {
   console.log("Server Started");
