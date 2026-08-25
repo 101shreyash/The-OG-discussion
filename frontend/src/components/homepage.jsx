@@ -1,11 +1,15 @@
 import {Link, useNavigate} from "react-router-dom"
 import {toast} from "react-hot-toast";
 import { useEffect } from "react";
+import { useState } from "react";
+
 
 
 function Homepage() {
 
     const navigate = useNavigate();
+
+    let [communityname , setcommunityname] = useState([]);
 
     async function fetchMyCommunties() {
 
@@ -20,10 +24,7 @@ function Homepage() {
             })
 
          const msg = await result.json()
-         console.log(msg.message);
-
-         // work in progess to be 
-         // i have to render communuties that they have created and the one theyve joined so far
+         setcommunityname(msg.message)
          
 
          if (msg.message === "Session Expired Please login again" && msg.success === false && result.status === 401) {
@@ -32,8 +33,7 @@ function Homepage() {
              toast.error("Session Expired Please login again" , {duration : 1500})            
             
          }
-         
-            
+           
             
         } 
         
@@ -85,9 +85,7 @@ function Homepage() {
 
             
         }
-       
-    // toast.success("Logout Sucessfull")
-    
+           
 
     }
 
@@ -101,9 +99,21 @@ function Homepage() {
 
     <h1 className="main-heading" style={{textDecoration : "underline plum" , textUnderlineOffset : "20px"}}>Your Communuties</h1>
 
-    <Link className="comm-links">CommunityStoic</Link>
+
+{communityname?.map((name) => {
+        
+   return <div key={name?.community_id} style={{display : "inline-block"}}>
+
+<Link className="common-links">{name?.community_name}</Link> 
     
-    
+    </div>
+
+
+console.log(name.community_name);
+
+
+})}
+
     </div>
     
 }

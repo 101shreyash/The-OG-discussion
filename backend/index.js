@@ -196,12 +196,29 @@ app
           [userid],
         );
 
-        if (result.rowCount > 0) {
-          res.status(200).json({
+        const usernickname = result.rows[0].nickname
+        
+        console.log(usernickname === null);
+        
+
+        if (usernickname === null) {
+         return res.status(400).json({
+            success: false,
+            message: "Nickname is required",
+          });
+        }
+
+        if (usernickname.length > 1 && usernickname !== null) {
+
+          return res.status(200).json({
             success: true,
             message: "No need for nickname",
           });
+          
         }
+
+
+
       } catch (error) {
         console.log(error);
         return res.status(500).json({

@@ -29,7 +29,7 @@ function Login() {
 
                 if (result.status === 401 && msg.success === false && msg.message === "Invalid Credentials Username or password didn't matched") {
 
-                    toast.error("Invalid Credentials Username or password didn't matched Enter valid Credentials", { duration: 2300 })
+                    toast.error("Invalid Credentials Username or password didn't matched Enter valid Credentials", { duration: 2600 })
                     return reset();
 
                 }

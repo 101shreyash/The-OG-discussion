@@ -26,8 +26,7 @@ function AskName() {
                 
                 navigate("/profilepic")
                 
-             }
-             
+             }        
             
         } 
         
