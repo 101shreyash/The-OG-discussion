@@ -604,6 +604,56 @@ app
     DbCall();
   });
 
+  app.route("/searchcommunity/:communityname")
+
+  .get(jwtvalidation , (req,res) => {
+
+    async function DbCall() {
+
+      try {
+
+        const communityname = req.params.communityname
+
+      const result =  await pool.query("SELECT community_id , community_name , community_description , community_bg_image  FROM community WHERE community_name ILIKE  $1" , [communityname])
+
+
+      if (result.rowCount === 0 ) {
+
+       return res.status(404).json({
+         success : false,
+          message : "No such community matched with given community name Input Valid CommunityName"
+        })
+        
+      }
+
+     return  res.status(200).json({
+        success : true,
+        message : result.rows
+      })
+      
+      
+        
+      } 
+      
+      
+      catch (error) {
+
+        console.log(error.message);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        
+        
+      }
+      
+    }
+
+    DbCall();
+
+
+  })
+
 app.listen(port, () => {
   console.log("Server Started");
 });

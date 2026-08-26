@@ -214,3 +214,13 @@ body {
   border : none; 
   
 }
+
+
+
+.para-style {
+  max-width: 800px;
+  margin: 20px auto;
+  line-height: 1.6;
+  white-space: normal;
+  overflow-wrap: break-word;
+}

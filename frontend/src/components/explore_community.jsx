@@ -10,6 +10,7 @@ function ExploreCommunity() {
   let {register : registersearch , handleSubmit : handlesearch , reset : resetsearch } = useForm();
 
   let [commtypeinfo , setcommtypeinfo] = useState([]);
+  let [searchcommunityinfo , setsearchcommunityinfo] = useState([])
 
  let navigate =  useNavigate();
 
@@ -62,9 +63,6 @@ function ExploreCommunity() {
         }
 
         NetworkCall();
-
-
-        // resetselect();
         
 
     }
@@ -72,8 +70,45 @@ function ExploreCommunity() {
     function AfterSearch(data) {
 
         const communityName = data.communityname
-        console.log(communityName);
-        // resetsearch();
+
+        async function NetworkCall() {
+
+            try {
+
+               const result =  await fetch(`http://localhost:8001/searchcommunity/${communityName}` , {
+                method : "GET",
+                headers : ({
+                    'Content-type' : 'application/json'
+                }),
+                credentials : "include"
+
+               })
+
+               
+               const msg = await result.json()
+
+               if (msg.success === false && msg.message === "No such community matched with given community name Input Valid CommunityName" && result.status === 404) {
+
+                toast("No such Community Found Enter valid Community Name" , {duration : 2300})
+               return resetsearch();
+                
+               }
+               
+               setsearchcommunityinfo(msg.message)
+               
+                
+            } 
+            
+            catch (error) {
+
+                console.log(error);
+                toast.error(error.message)     
+                
+            }
+            
+        }
+
+        NetworkCall();
         
         
     }
@@ -135,8 +170,7 @@ function ExploreCommunity() {
 
         {info?.community_bg_image? <img className="community-bg-image" src= {`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
         {info?.community_name? <p className="community-name-style"> Community Name : {info.community_name}</p> : ""}
-        {info?.community_description? <p style={{font : "caption"}}> Description : {info.community_description}</p> : ""}
-        {info?.created_date? <p className="sub-head"> Created at  : {createdDate}</p> : ""}
+        {info?.community_description? <p className="para-style"> Description : {info.community_description}</p> : ""}
         <button className="join-community-btn">Join {info.community_name}</button>
         <br /><br />
 
@@ -150,6 +184,26 @@ function ExploreCommunity() {
             <h3 className="sub-heading">Or Seach a Specific Community Name</h3>
             <input style={{ height: "40px", width: "20%", textAlign: 'center' }} type="search" placeholder="Search Community Name" required  {...registersearch("communityname")}/> &nbsp;
             <button className="click-btn" type="submit">Search</button>
+            <br /><br />
+
+           {searchcommunityinfo?.map((info) => {
+            console.log(info);
+            
+            
+            return <div key={info.community_id}>
+                
+            {info?.community_bg_image? <img className="community-bg-image" src= {`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
+
+            {info?.community_name ? <p className="community-name-style"> CommunityName : {info.community_name} </p> : ""}
+            {info?.community_description? <p className="para-style">{info.community_description}</p> : ""}
+             <button className="join-community-btn">Join {info.community_name}</button>
+
+
+            </div>
+             
+
+           })}
+
         </form>
 
     </div>
