@@ -71,10 +71,8 @@ function FriendsProfile() {
     <h1 className="main-heading">{friendInfo} Profile</h1>
     {finalProfileInfo === null ? <p className="sub-heading">No Profile Found Enter valid Username</p> : ""}
  <img className="userpp" src={`http://localhost:8001/profilepic/${finalProfileInfo?.profile_picture}`} alt="profilepic"/> 
-{finalProfileInfo?.username ? <h1 className="sub-head ">Username : {finalProfileInfo.username} </h1> : <h1 className="sub-head">Username : No profile Found Matching current username </h1>}
-{finalProfileInfo?.nickname ? <h1 className="sub-head">Nickname : {finalProfileInfo.nickname}</h1> : <h1 className="sub-head">Nickname : No profile Found Matching current username  </h1>}
-
-
+{finalProfileInfo?.username ? <h1 className="sub-head ">Username : {finalProfileInfo.username} </h1> : <h1 className="sub-head">Username : - </h1>}
+{finalProfileInfo?.nickname ? <h1 className="sub-head">Nickname : {finalProfileInfo.nickname}</h1> : <h1 className="sub-head">Nickname : -  </h1>}
 
 
     </div>

@@ -82,20 +82,24 @@ body {
 
 .create-comm-btn{
 
-  background-color: plum;
-  height: 60px;
+  background-color: rgb(236, 182, 236);
+  height: 44px;
   width: 10%;
   border: none;
   cursor: pointer;
+  border-radius: 6px;
+  color: black;
+  font-size: 1rem;
 
+  
 
 
 }
 
 .create-comm-btn:hover{
 
-  background-color: rgb(237, 62, 237);
-  height: 60px;
+  background-color: rgb(181, 74, 181);
+  height: 44px;
   width: 10%;
    border : none; 
 
@@ -135,7 +139,7 @@ body {
 
 .skip-btn{
 
-  font-size: 40px;
+  font-size: 30px;
   text-decoration: underline white;
   text-underline-offset: 12px;
   color: plum;
@@ -145,7 +149,7 @@ body {
 .skip-btn:hover{
 
   color: white;
-  font-size: 40px;
+  font-size: 30px;
   text-decoration: underline plum;
   text-underline-offset: 12px;
 
@@ -159,4 +163,54 @@ body {
   width: 200px;
   object-fit: cover;
 
+}
+
+
+.input-style{
+  background-color: rgb(163, 133, 159);
+  font-size: 20px;
+  border: none;
+}
+
+.input-style::placeholder{
+
+  color:  white;
+  font-family: "Oswald", sans-serif;;
+}
+
+
+.community-name-style{
+
+
+  font-family: "Oswald", sans-serif;
+  font-size: 28px;
+  color: rgb(121, 120, 120);
+  background: none;
+  border: none;
+  text-decoration: underline plum 5px;
+  text-underline-offset: 7px;
+
+}
+
+
+.community-bg-image{
+  height: 200px;
+  object-fit: contain;
+}
+
+.join-community-btn{
+  width: auto;
+  height: 55px;
+  background-color: plum;
+  border: none;
+  border-radius: 6px;
+}
+
+.join-community-btn:hover{
+
+  height: 55px;
+  background-color: rgb(237, 62, 237);
+  width: auto;
+  border : none; 
+  
 }

@@ -26,7 +26,6 @@ function ProfilePic() {
             })
 
             const msg = await result.json()
-            console.log(msg);
             
 
             if (msg.success === true && msg.message === `Don't show UI`) {
@@ -106,7 +105,7 @@ function ProfilePic() {
     return <div style={{ marginTop: "5%" }}>
 
         <h1 className="main-heading">Upload Your Profile Picture </h1>
-        {asknameState.state ? <h2 className="sub-heading">{asknameState.state}</h2> : <h2 className="sub-heading">Buddy</h2>}
+        {asknameState.state ? <h2 className="sub-heading">{asknameState.state}</h2> : ""}
         <form onSubmit={handleSubmit(AfterSubmit)}>
 
             <input type="file" accept=".jpeg,.jpg,.png,.svg" required {...register("profilepic")} />

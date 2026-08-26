@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast"
+import { useState } from "react";
 
 
 function CreateCommunity() {
@@ -8,6 +9,7 @@ function CreateCommunity() {
     let navigate = useNavigate();
 
     let { register, handleSubmit, reset } = useForm();
+    let [descriptionlength , setdescriptionlength]  = useState(0);
 
     function AfterCreate(data) {
 
@@ -15,6 +17,10 @@ function CreateCommunity() {
         const communityname = data.community_name
         const passkey = data.pass_key
         const description = data.desc
+
+        setdescriptionlength(description.length)
+        
+
         const type = data.type
         const unformatedCommBgImage = data.bgimage[0]; // bgimage 
 
@@ -79,8 +85,7 @@ function CreateCommunity() {
 
                 if (msg.message === "Community Description too Long!" && msg.success === false && result.status === 400) {
 
-                    toast.error("Community Description too Long !", { duration: 1200 })
-                    reset();
+                    toast.error("Community Description too Long !", { duration: 1500 })
 
                 }
 
@@ -108,27 +113,29 @@ function CreateCommunity() {
         NetworkCall();
 
 
-        //   return  navigate("/homepage")
-
     }
 
-    return <div className="">
+    return <div style={{marginTop : "5%"}}>
 
         <h1 className="main-heading">Create Your Own Community</h1>
 
         <form onSubmit={handleSubmit(AfterCreate)} className="community-form">
-            <h2> What Will You Name Your Community ?</h2>
-            <input style={{ height: "40px", width: "20%" }} type="text" placeholder="Community Name" required {...register("community_name")} />
-            <h2> What About Passkeys ? </h2>
-            <input style={{ height: "40px", width: "12%" }} type="password" placeholder="Community Passkey" required {...register("pass_key")} />
-            <h2> How would You Describe Your Community In 250 Words ?</h2>
-            <textarea style={{ height: "120px", width: "50%", textAlign: "center", alignContent: "center" }} placeholder="Community Description" required {...register("desc")}></textarea>
-            <h2>What's the Type of Community You're Building ?</h2>
-            <select required {...register("type")}>
 
-                <option value="" hidden>Select Type</option>
+            <h2 className="sub-head"> What Will You Name Your Community ?</h2>
+            <input className="input-style" style={{ height: "40px", width: "20%" , textAlign : "center"}} type="text" placeholder="Community Name" required {...register("community_name")} />
+
+
+            <h2 className="sub-head"> What About Passkeys ? </h2>
+            <input className="input-style" style={{ height: "40px", width: "12%" , textAlign : "center"}} type="password" placeholder="Community Passkey" required {...register("pass_key")} />
+            <h2 className="sub-head"> How would You Describe Your Community In 250 Words ?</h2>
+            <textarea className="input-style" style={{ height: "150px", width: "50%", textAlign: "center", alignContent: "center"}} placeholder="Community Description" required {...register("desc")}></textarea>
+             {descriptionlength > 250 ? <p>Description too long {descriptionlength} /250 ! </p> : ""}
+            <h2 className="sub-head">What's the Type of Community You're Building ?</h2>
+            <select style={{height : "35px"}} required {...register("type")}>
+
+                  <option value="" hidden>Select Type</option>
                 <option>Fitness And Health</option>
-                <option>EntertainMent </option>
+                <option>Entertainment </option>
                 <option>Yoga And Health</option>
                 <option>Anime</option>
                 <option>Movies</option>
@@ -141,7 +148,7 @@ function CreateCommunity() {
                 <option>Mathematics</option>
                 <option>Astronomy</option>
                 <option>Music Intruments</option>
-                <option>Musics And Beats</option>
+                <option>Music</option>
                 <option>Weather And Environment</option>
                 <option>Politics</option>
                 <option>Media And News</option>
@@ -151,11 +158,12 @@ function CreateCommunity() {
                 <option>Gaming</option>
                 <option>Board Games</option>
                 <option>Books Discussion</option>
+                <option>Art and Creativity</option>
                 <option>Others</option>
 
             </select>
-            <h2> Upload Background Image for Giving Your Community A Identity </h2>
-            <input type="file" accept=".jpeg,.jpg,.png,.svg" required {...register("bgimage")} />
+            <h2 className="sub-head"> Upload Background Image for Giving Your Community A Identity </h2>
+            <input style={{color : "plum"}} type="file" accept=".jpeg,.jpg,.png,.svg" required {...register("bgimage")} />
             <br /><br /><br /><br />
             <button type="submit" className="create-comm-btn">Create Community</button>
         </form>

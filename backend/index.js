@@ -16,6 +16,7 @@ const communityBgImage = multer({ dest: "communitybgimg" });
 
 // serving profilepic and community background picture
 app.use("/profilepic", express.static("profilepic/"));
+app.use("/communityBG", express.static("communitybgimg/"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -196,29 +197,23 @@ app
           [userid],
         );
 
-        const usernickname = result.rows[0].nickname
-        
+        const usernickname = result.rows[0].nickname;
+
         console.log(usernickname === null);
-        
 
         if (usernickname === null) {
-         return res.status(400).json({
+          return res.status(400).json({
             success: false,
             message: "Nickname is required",
           });
         }
 
         if (usernickname.length > 1 && usernickname !== null) {
-
           return res.status(200).json({
             success: true,
             message: "No need for nickname",
           });
-          
         }
-
-
-
       } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -533,30 +528,68 @@ app
 app
   .route("/viewyourcommunity")
 
-  .get(jwtvalidation , (req, res) => {
-
+  .get(jwtvalidation, (req, res) => {
     const userid = req.user.userid;
 
     async function DbCall() {
+      try {
+        const result = await pool.query(
+          "SELECT community_name , community_id  FROM community WHERE userid = $1",
+          [userid],
+        );
 
+        if (result.rowCount < 1) {
+          return res.status(404).json({
+            success: false,
+            message: "No community Found Try Creating Some",
+          });
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: result.rows,
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+
+    DbCall();
+  });
+
+app
+  .route("/explorecommunity/:communitytype")
+
+  .get(jwtvalidation, (req, res) => {
+    const communitytype = req.params.communitytype;
+
+    async function DbCall() {
       try {
 
-        const result = await pool.query("SELECT community_name , community_id  FROM community WHERE userid = $1" , [userid])
+        const result = await pool.query(
+          "SELECT community_id  , community_name , community_description , community_bg_image , created_date  FROM community WHERE community_type = $1;",
+          [communitytype],
+        );
 
-        if (result.rowCount <1) {
-
+        if (result.rowCount === 0) {
           return res.status(404).json({
-            success : false,
-            message : "No community Found Try Creating Some"
-          })
-        } 
-        
+            success: false,
+            message: "No Community found with given type try Creating a One",
+          });
+        }
+
        return res.status(200).json({
           success : true,
           message : result.rows
         })
+        
 
-      }
+      } 
+      
       
       catch (error) {
         console.log(error);
@@ -565,7 +598,8 @@ app
           message: "Server Error",
         });
       }
-    }
+
+    } // Db Call Scope ends Here
 
     DbCall();
   });
