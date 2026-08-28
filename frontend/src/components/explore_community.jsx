@@ -1,18 +1,71 @@
 import { useForm } from "react-hook-form"
 import { Link, useNavigate } from "react-router-dom";
-import {toast} from "react-hot-toast"
+import { toast } from "react-hot-toast"
 import { useState } from "react";
 
 function ExploreCommunity() {
 
 
-  let {register : registerselect , handleSubmit : handleselect , reset : resetselect } = useForm();
-  let {register : registersearch , handleSubmit : handlesearch , reset : resetsearch } = useForm();
+    let { register: registerselect, handleSubmit: handleselect, reset: resetselect } = useForm();
+    let { register: registersearch, handleSubmit: handlesearch, reset: resetsearch } = useForm();
 
-  let [commtypeinfo , setcommtypeinfo] = useState([]);
-  let [searchcommunityinfo , setsearchcommunityinfo] = useState([])
+    let [commtypeinfo, setcommtypeinfo] = useState([]);
+    let [searchcommunityinfo, setsearchcommunityinfo] = useState([])
 
- let navigate =  useNavigate();
+
+    let navigate = useNavigate();
+
+
+    function ToJoinCommunity(communityid) {
+
+        // toast(communityid , {duration : 1000})
+
+        async function NetworkCall() {
+
+            try {
+
+                const result = await fetch(`http://localhost:8001/joincommunity/${communityid}`, {
+                    credentials: "include",
+                    method: "POST",
+                    headers: ({
+                        'Content-type': 'application/json'
+                    })
+                })
+
+                const msg = await result.json()
+                console.log(msg);
+
+                if (result.status === 200 && msg.success === true && msg.message === "You have alredy Joined The Community") {
+
+                     toast.success("You have alredy Joined The Community", { duration: 2000 })
+                     navigate("/homepage")
+                     
+
+                }
+
+
+                if (result.status === 200 && msg.success === true && msg.message === "Community Joined Sucessfully") {
+
+                     toast.success("Congrats You've Joined The Community", { duration: 2000 })
+                     navigate("/homepage")
+
+                }
+
+
+            }
+
+            catch (error) {
+
+                return toast.error(error.message, { duration: 1200 })
+
+            }
+        }
+
+        NetworkCall();
+
+    }
+
+
 
     function AfterSelect(data) {
 
@@ -22,48 +75,48 @@ function ExploreCommunity() {
 
             try {
 
-        const result =  await fetch(`http://localhost:8001/explorecommunity/${communityType}` , {
-            
-            method : "GET",
-            credentials : "include",
-            headers : ({
-                'Content-type' : 'application/json'
-            })
-        })
+                const result = await fetch(`http://localhost:8001/explorecommunity/${communityType}`, {
 
-        const msg = await result.json()
-        
-        if (result.status === 401 && msg.message === "Session Expired Please login again" && msg.success === false) {
-            
-            toast.error("Session Expired Please login again" , {duration : 1300})
-            return  navigate("/login")
-            
-        }
-        
-        
-        if (result.status === 404 && msg.message === "No Community found with given type try Creating a One" && msg.success === false) {
-            
-            toast("No Community found with given type Try Creating a New One" , {duration : 3000})
-            return resetselect();
-            
-        }
-        
-        setcommtypeinfo(msg.message)
-        
-        
-    }
-    
+                    method: "GET",
+                    credentials: "include",
+                    headers: ({
+                        'Content-type': 'application/json'
+                    })
+                })
+
+                const msg = await result.json()
+
+                if (result.status === 401 && msg.message === "Session Expired Please login again" && msg.success === false) {
+
+                    toast.error("Session Expired Please login again", { duration: 1300 })
+                    return navigate("/login")
+
+                }
+
+
+                if (result.status === 404 && msg.message === "No Community found with given type try Creating a One" && msg.success === false) {
+
+                    toast("No Community found with given type Try Creating a New One", { duration: 3000 })
+                    return resetselect();
+
+                }
+
+                setcommtypeinfo(msg.message)
+
+
+            }
+
             catch (error) {
 
                 console.log(error);
                 toast.error(error.message)
-                
+
             }
-            
+
         }
 
         NetworkCall();
-        
+
 
     }
 
@@ -75,45 +128,44 @@ function ExploreCommunity() {
 
             try {
 
-               const result =  await fetch(`http://localhost:8001/searchcommunity/${communityName}` , {
-                method : "GET",
-                headers : ({
-                    'Content-type' : 'application/json'
-                }),
-                credentials : "include"
+                const result = await fetch(`http://localhost:8001/searchcommunity/${communityName}`, {
+                    method: "GET",
+                    headers: ({
+                        'Content-type': 'application/json'
+                    }),
+                    credentials: "include"
 
-               })
+                })
 
-               
-               const msg = await result.json()
 
-               if (msg.success === false && msg.message === "No such community matched with given community name Input Valid CommunityName" && result.status === 404) {
+                const msg = await result.json()
 
-                toast("No such Community Found Enter valid Community Name" , {duration : 2300})
-               return resetsearch();
-                
-               }
-               
-               setsearchcommunityinfo(msg.message)
-               
-                
-            } 
-            
+                if (msg.success === false && msg.message === "No such community matched with given community name Input Valid CommunityName" && result.status === 404) {
+
+                    toast("No such Community Found Enter valid Community Name", { duration: 2300 })
+                    return resetsearch();
+
+                }
+
+                setsearchcommunityinfo(msg.message)
+
+
+            }
+
             catch (error) {
 
                 console.log(error);
-                toast.error(error.message)     
-                
+                toast.error(error.message)
+
             }
-            
+
         }
 
         NetworkCall();
-        
-        
+
+
     }
 
-   
 
     return <div style={{ marginTop: "5%" }}>
 
@@ -125,7 +177,7 @@ function ExploreCommunity() {
         <form onSubmit={handleselect(AfterSelect)}>
 
             <select required style={{ height: "40px", width: "10%", textAlign: 'center' }} {...registerselect("communitytype")}>
-                 <option value="" hidden>Select Type</option>
+                <option value="" hidden>Select Type</option>
                 <option>Fitness And Health</option>
                 <option>Entertainment </option>
                 <option>Yoga And Health</option>
@@ -158,51 +210,49 @@ function ExploreCommunity() {
         </form>
         <br /><br />
 
- 
-       {commtypeinfo?.map((info) => {
 
-        console.log(info);
-        
+        {commtypeinfo?.map((info) => {
 
-         const createdDate = info.created_date.substr(0,10)
-         
-        return <div key={info.community_id}>
+            // console.log(info);
 
-        {info?.community_bg_image? <img className="community-bg-image" src= {`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
-        {info?.community_name? <p className="community-name-style"> Community Name : {info.community_name}</p> : ""}
-        {info?.community_description? <p className="para-style"> Description : {info.community_description}</p> : ""}
-        <button className="join-community-btn">Join {info.community_name}</button>
-        <br /><br />
 
-        
-        </div>
-        
-       })}
+            const createdDate = info.created_date.substr(0, 10)
+
+            return <div key={info.community_id}>
+
+                {info?.community_bg_image ? <img className="community-bg-image" src={`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
+                {info?.community_name ? <p className="community-name-style"> Community Name : {info.community_name}</p> : ""}
+                {info?.community_description ? <p className="para-style"> Description : {info.community_description}</p> : ""}
+                <button onClick={() => ToJoinCommunity(info.community_id)} className="join-community-btn">Join {info.community_name}</button>
+                <br /><br />
+
+
+            </div>
+
+        })}
 
         {/* ---------------- Search Form ----------------------- */}
         <form onSubmit={handlesearch(AfterSearch)}>
             <h3 className="sub-heading">Or Seach a Specific Community Name</h3>
-            <input style={{ height: "40px", width: "20%", textAlign: 'center' }} type="search" placeholder="Search Community Name" required  {...registersearch("communityname")}/> &nbsp;
+            <input style={{ height: "40px", width: "20%", textAlign: 'center' }} type="search" placeholder="Search Community Name" required  {...registersearch("communityname")} /> &nbsp;
             <button className="click-btn" type="submit">Search</button>
             <br /><br />
 
-           {searchcommunityinfo?.map((info) => {
-            console.log(info);
-            
-            
-            return <div key={info.community_id}>
-                
-            {info?.community_bg_image? <img className="community-bg-image" src= {`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
+            {searchcommunityinfo?.map((info) => {
 
-            {info?.community_name ? <p className="community-name-style"> CommunityName : {info.community_name} </p> : ""}
-            {info?.community_description? <p className="para-style">{info.community_description}</p> : ""}
-             <button className="join-community-btn">Join {info.community_name}</button>
+                return <div key={info.community_id}>
+
+                    {info?.community_bg_image ? <img className="community-bg-image" src={`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
+
+                    {info?.community_name ? <p className="community-name-style"> CommunityName : {info.community_name} </p> : ""}
+                    {info?.community_description ? <p className="para-style">{info.community_description}</p> : ""}
+                    <button onClick={() => ToJoinCommunity(info.community_id)}  className="join-community-btn">Join {info.community_name}</button>
 
 
-            </div>
-             
+                </div>
 
-           })}
+
+            })}
 
         </form>
 

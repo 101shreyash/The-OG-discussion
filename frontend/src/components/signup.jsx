@@ -83,6 +83,7 @@ function Signup() {
             catch (error) {
 
                 console.log(error);
+                reset();
                 toast.error(error.message, { duration: 1000 })
 
             }

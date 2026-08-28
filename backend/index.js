@@ -651,6 +651,70 @@ app
 
     DbCall();
 
+  })
+
+
+  app.route("/joincommunity/:communityid")
+
+  .post(jwtvalidation , (req,res) => {
+
+    const userid = req.user.userid
+    const communityid = req.params.communityid
+
+    async function DbCall() {
+
+      try {
+
+     await pool.query("INSERT INTO members (userid , community_id) VALUES ($1,$2)" , [userid , communityid])
+     return res.json({
+      success : true,
+      message : "Community Joined Sucessfully"
+    })
+        
+      } 
+      
+      catch (error) {
+
+        if (error.code === "23505") {
+
+        return res.status(200).json({
+
+          success : true,
+          message : "You have alredy Joined The Community"
+
+          })
+          
+        }
+
+        if (error.code === "23503") {
+
+          return res.status(404).json({
+
+          success : false,
+          message : "Community Doesnot Exist"
+
+          })
+
+          
+        }
+
+
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+        
+        
+      }
+      
+    }
+
+    DbCall();
+
+
+
+
 
   })
 
