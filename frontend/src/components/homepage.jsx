@@ -24,6 +24,8 @@ function Homepage() {
             })
 
             const msg = await result.json()
+            console.log(msg);
+            
             setcommunityname(msg.message)
 
 
@@ -99,7 +101,7 @@ function Homepage() {
 
         <h1 className="main-heading" style={{ textDecoration: "underline plum", textUnderlineOffset: "20px" }}>Your Communuties</h1>
 
-        {typeof communityname === "string" ? <h1 style={{ color: "grey" }}>You dont have community Yet ! Create a one .</h1> :
+        {typeof communityname === "string" ? <h1 style={{ color: "grey" }}>You Have not Yet Created Any Community ! You can Create a one .</h1> :
 
             communityname.map((name) => {
 

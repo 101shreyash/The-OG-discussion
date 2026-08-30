@@ -15,53 +15,9 @@ function ExploreCommunity() {
 
     let navigate = useNavigate();
 
+    function ToJoinCommunity(communityid , communityname) {
 
-    function ToJoinCommunity(communityid) {
-
-        // toast(communityid , {duration : 1000})
-
-        async function NetworkCall() {
-
-            try {
-
-                const result = await fetch(`http://localhost:8001/joincommunity/${communityid}`, {
-                    credentials: "include",
-                    method: "POST",
-                    headers: ({
-                        'Content-type': 'application/json'
-                    })
-                })
-
-                const msg = await result.json()
-                console.log(msg);
-
-                if (result.status === 200 && msg.success === true && msg.message === "You have alredy Joined The Community") {
-
-                     toast.success("You have alredy Joined The Community", { duration: 2000 })
-                     navigate("/homepage")
-                     
-
-                }
-
-
-                if (result.status === 200 && msg.success === true && msg.message === "Community Joined Sucessfully") {
-
-                     toast.success("Congrats You've Joined The Community", { duration: 2000 })
-                     navigate("/homepage")
-
-                }
-
-
-            }
-
-            catch (error) {
-
-                return toast.error(error.message, { duration: 1200 })
-
-            }
-        }
-
-        NetworkCall();
+        navigate("/joincommunity" , {state : {communityid : communityid , communityname : communityname}})
 
     }
 
@@ -223,7 +179,7 @@ function ExploreCommunity() {
                 {info?.community_bg_image ? <img className="community-bg-image" src={`http://localhost:8001/communityBG/${info.community_bg_image}`} alt="Community Background Image" /> : ""}
                 {info?.community_name ? <p className="community-name-style"> Community Name : {info.community_name}</p> : ""}
                 {info?.community_description ? <p className="para-style"> Description : {info.community_description}</p> : ""}
-                <button onClick={() => ToJoinCommunity(info.community_id)} className="join-community-btn">Join {info.community_name}</button>
+                <button onClick={() => ToJoinCommunity(info.community_id , info.community_name)} className="join-community-btn">Join {info.community_name}</button>
                 <br /><br />
 
 
@@ -246,7 +202,7 @@ function ExploreCommunity() {
 
                     {info?.community_name ? <p className="community-name-style"> CommunityName : {info.community_name} </p> : ""}
                     {info?.community_description ? <p className="para-style">{info.community_description}</p> : ""}
-                    <button onClick={() => ToJoinCommunity(info.community_id)}  className="join-community-btn">Join {info.community_name}</button>
+                    <button onClick={() => ToJoinCommunity(info.community_id , info.community_name)}  className="join-community-btn">Join {info.community_name}</button>
 
 
                 </div>

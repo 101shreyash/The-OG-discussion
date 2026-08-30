@@ -63,7 +63,7 @@ app
 
         await pool.query(
           "INSERT INTO users (username,hash_password,profile_picture) VALUES ($1,$2,$3)",
-          [username, hashedpassword, "13b491cae3c2f22a69cfb47925cba5d2"],
+          [username, hashedpassword, "2700e7f0c8127299c83398ad578547c9"],
           // in case where user skips to add profile picture a default no profilepic image will be there
         );
         return res.status(200).json({
@@ -276,7 +276,7 @@ app
   .get(jwtvalidation, (req, res) => {
     const userid = req.user.userid;
 
-    // 13b491cae3c2f22a69cfb47925cba5d2 this filename refers to image that says no profilepicture
+    // 2700e7f0c8127299c83398ad578547c9 this filename refers to image that says no profilepicture
 
     async function DbCall() {
       try {
@@ -286,7 +286,7 @@ app
         );
         const ppurl = result.rows[0].profile_picture;
 
-        if ((ppurl === "13b491cae3c2f22a69cfb47925cba5d2") === true) {
+        if ((ppurl === "2700e7f0c8127299c83398ad578547c9") === true) {
           // is noprofile picture true  ?? then show the ui saying upload profilepic else dont show ui
           return res.status(200).json({
             success: true,
@@ -569,7 +569,6 @@ app
 
     async function DbCall() {
       try {
-
         const result = await pool.query(
           "SELECT community_id  , community_name , community_description , community_bg_image , created_date  FROM community WHERE community_type = $1;",
           [communitytype],
@@ -582,141 +581,155 @@ app
           });
         }
 
-       return res.status(200).json({
-          success : true,
-          message : result.rows
-        })
-        
-
-      } 
-      
-      
-      catch (error) {
+        return res.status(200).json({
+          success: true,
+          message: result.rows,
+        });
+      } catch (error) {
         console.log(error);
         return res.status(500).json({
           success: false,
           message: "Server Error",
         });
       }
-
     } // Db Call Scope ends Here
 
     DbCall();
   });
 
-  app.route("/searchcommunity/:communityname")
+app
+  .route("/searchcommunity/:communityname")
 
-  .get(jwtvalidation , (req,res) => {
-
+  .get(jwtvalidation, (req, res) => {
     async function DbCall() {
-
       try {
+        const communityname = req.params.communityname;
 
-        const communityname = req.params.communityname
+        const result = await pool.query(
+          "SELECT community_id , community_name , community_description , community_bg_image  FROM community WHERE community_name ILIKE  $1",
+          [communityname],
+        );
 
-      const result =  await pool.query("SELECT community_id , community_name , community_description , community_bg_image  FROM community WHERE community_name ILIKE  $1" , [communityname])
+        if (result.rowCount === 0) {
+          return res.status(404).json({
+            success: false,
+            message:
+              "No such community matched with given community name Input Valid CommunityName",
+          });
+        }
 
-
-      if (result.rowCount === 0 ) {
-
-       return res.status(404).json({
-         success : false,
-          message : "No such community matched with given community name Input Valid CommunityName"
-        })
-        
-      }
-
-     return  res.status(200).json({
-        success : true,
-        message : result.rows
-      })
-      
-      
-        
-      } 
-      
-      
-      catch (error) {
-
+        return res.status(200).json({
+          success: true,
+          message: result.rows,
+        });
+      } catch (error) {
         console.log(error.message);
         return res.status(500).json({
           success: false,
           message: "Server Error",
         });
-        
-        
       }
-      
     }
 
     DbCall();
+  });
 
-  })
+app
+  .route("/joincommunity/:communityid")
+
+  .post(jwtvalidation, (req, res) => {
 
 
-  app.route("/joincommunity/:communityid")
+    const userid = req.user.userid;
+    const communityid = req.params.communityid;
+    const communitypasskey = req.body.passkey
 
-  .post(jwtvalidation , (req,res) => {
+    if (!communityid) {
 
-    const userid = req.user.userid
-    const communityid = req.params.communityid
+     return res.status(400).json({
+        success : false,
+        message : "Community Id is required"
+      })
+      
+    }
+
+    if (!communitypasskey) {
+
+     return res.status(400).json({
+        success : false,
+        message : "Community Passkey is required"
+      })
+      
+      
+    }
 
     async function DbCall() {
+      const result = await pool.query(
+        "SELECT community_passkey FROM community WHERE community_id = $1 ",
+        [communityid],
+      );
 
-      try {
+      if (result.rowCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message:
+            "No such community Found",
+        });
 
-     await pool.query("INSERT INTO members (userid , community_id) VALUES ($1,$2)" , [userid , communityid])
-     return res.json({
+      }
+
+    const hashedCommunityPasskey = result.rows[0].community_passkey
+    
+         const macthed = await bcrypt.compare(communitypasskey , hashedCommunityPasskey)
+         
+         if (!macthed) {
+
+        return  res.status(401).json({
+             success : false,
+            message : "Community Passkey Didin't matched"
+          })
+          
+         }
+
+         try {
+
+
+      await pool.query("INSERT INTO members (userid , communitY_id) VALUES ($1,$2);" , [userid , communityid])
+      return res.json({
       success : true,
       message : "Community Joined Sucessfully"
     })
-        
-      } 
-      
-      catch (error) {
-
-        if (error.code === "23505") {
-
-        return res.status(200).json({
-
-          success : true,
-          message : "You have alredy Joined The Community"
-
-          })
           
-        }
+        } 
+         
+         
+         catch (error) {
 
-        if (error.code === "23503") {
+          if (error.code === "23505") {
 
-          return res.status(404).json({
-
-          success : false,
-          message : "Community Doesnot Exist"
-
-          })
-
-          
-        }
-
+           return res.status(200).json({
+              success : true,
+              message : "You've Alredy Joined The community"
+            })
+            
+          }
 
         console.log(error);
         return res.status(500).json({
-          success: false,
-          message: "Server Error",
-        });
+
+          success : false,
+            message : "Server Error"
+          })
+          
+
+         }
+
         
-        
-      }
       
     }
 
     DbCall();
-
-
-
-
-
-  })
+  });
 
 app.listen(port, () => {
   console.log("Server Started");
