@@ -101,7 +101,7 @@ function Homepage() {
 
         <h1 className="main-heading" style={{ textDecoration: "underline plum", textUnderlineOffset: "20px" }}>Your Communuties</h1>
 
-        {typeof communityname === "string" ? <h1 style={{ color: "grey" }}>You Have not Yet Created Any Community ! You can Create a one .</h1> :
+        {typeof communityname === "string" ? <h1 style={{ color: "grey" }}>You Have not Yet Created Or Joined Any Community !  .</h1> :
 
             communityname.map((name) => {
 

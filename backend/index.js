@@ -534,9 +534,9 @@ app
     async function DbCall() {
       try {
         const result = await pool.query(
-          "SELECT community_name , community_id  FROM community WHERE userid = $1",
+          "SELECT community.community_name , community.community_id  FROM community INNER JOIN  members ON community.community_id = members.community_id WHERE members.userid = $1;",
           [userid],
-        );
+        );        
 
         if (result.rowCount < 1) {
           return res.status(404).json({
