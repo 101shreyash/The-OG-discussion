@@ -536,7 +536,7 @@ app
         const result = await pool.query(
           "SELECT community.community_name , community.community_id  FROM community INNER JOIN  members ON community.community_id = members.community_id WHERE members.userid = $1;",
           [userid],
-        );        
+        );
 
         if (result.rowCount < 1) {
           return res.status(404).json({
@@ -638,29 +638,22 @@ app
   .route("/joincommunity/:communityid")
 
   .post(jwtvalidation, (req, res) => {
-
-
     const userid = req.user.userid;
     const communityid = req.params.communityid;
-    const communitypasskey = req.body.passkey
+    const communitypasskey = req.body.passkey;
 
     if (!communityid) {
-
-     return res.status(400).json({
-        success : false,
-        message : "Community Id is required"
-      })
-      
+      return res.status(400).json({
+        success: false,
+        message: "Community Id is required",
+      });
     }
 
     if (!communitypasskey) {
-
-     return res.status(400).json({
-        success : false,
-        message : "Community Passkey is required"
-      })
-      
-      
+      return res.status(400).json({
+        success: false,
+        message: "Community Passkey is required",
+      });
     }
 
     async function DbCall() {
@@ -672,60 +665,129 @@ app
       if (result.rowCount === 0) {
         return res.status(404).json({
           success: false,
-          message:
-            "No such community Found",
+          message: "No such community Found",
         });
-
       }
 
-    const hashedCommunityPasskey = result.rows[0].community_passkey
-    
-         const macthed = await bcrypt.compare(communitypasskey , hashedCommunityPasskey)
-         
-         if (!macthed) {
+      const hashedCommunityPasskey = result.rows[0].community_passkey;
 
-        return  res.status(401).json({
-             success : false,
-            message : "Community Passkey Didin't matched"
-          })
-          
-         }
+      const macthed = await bcrypt.compare(
+        communitypasskey,
+        hashedCommunityPasskey,
+      );
 
-         try {
+      if (!macthed) {
+        return res.status(401).json({
+          success: false,
+          message: "Community Passkey Didin't matched",
+        });
+      }
 
-
-      await pool.query("INSERT INTO members (userid , communitY_id) VALUES ($1,$2);" , [userid , communityid])
-      return res.json({
-      success : true,
-      message : "Community Joined Sucessfully"
-    })
-          
-        } 
-         
-         
-         catch (error) {
-
-          if (error.code === "23505") {
-
-           return res.status(200).json({
-              success : true,
-              message : "You've Alredy Joined The community"
-            })
-            
-          }
+      try {
+        await pool.query(
+          "INSERT INTO members (userid , communitY_id) VALUES ($1,$2);",
+          [userid, communityid],
+        );
+        return res.json({
+          success: true,
+          message: "Community Joined Sucessfully",
+        });
+      } catch (error) {
+        if (error.code === "23505") {
+          return res.status(200).json({
+            success: true,
+            message: "You've Alredy Joined The community",
+          });
+        }
 
         console.log(error);
         return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
 
-          success : false,
-            message : "Server Error"
-          })
-          
+    DbCall();
+  });
 
-         }
+app
+  .route("/userposts")
 
+  .post(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+    const commid = req.body.communityid;
+    const postcontent = req.body.postcontent;
+
+    if (!commid) {
+      return res.status(400).json({
+        success: false,
+        message: "CommunityId is required",
+      });
+    }
+
+    async function DbCall() {
+      try {
+        await pool.query(
+          "INSERT INTO posts (userid,communityid,post_content) VALUES ($1,$2,$3)",
+          [userid, commid, postcontent],
+        );
+
+        return res.status(200).json({
+          success: true,
+          message: "Posted sucessfully",
+        });
+      } catch (error) {
+        if (error.code === "23503") {
+          return res.json({
+            success: false,
+            message: "Communityid Dosen't Exists",
+          });
+        }
+
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
+    }
+
+    DbCall();
+  });
+
+app
+  .route("/viewcommunityposts/:communityid")
+
+  .get(jwtvalidation, (req, res) => {
+    const userid = req.user.userid;
+    const communityid = req.params.communityid;
+
+    async function DbCall() {
+      try {
+
+
+       const result =  await pool.query(
+          "SELECT users.username , posts.post_content , posts.posted_at FROM users INNER JOIN posts ON users.userid = posts.userid WHERE posts.communityid = $1",
+          [communityid],);
+
+        res.status(200).json({
+          success : true,
+          message : result.rows
+        })
         
+
+
+      } 
       
+      
+      catch (error) {
+        console.log(error);
+        return res.status(500).json({
+          success: false,
+          message: "Server Error",
+        });
+      }
     }
 
     DbCall();

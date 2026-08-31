@@ -11,6 +11,7 @@ import AskName from "./components/askname";
 import ProfilePic from "./components/profilepic";
 import FriendsProfile from "./components/friendsprofile";
 import JoinCommunity from "./components/joincommunity";
+import Post from "./components/post";
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
  <Route path="/profile"  element = {<UserProfile/>}/>
  <Route path="/friendsprofile"  element = {<FriendsProfile/>}/>
  <Route path="/joincommunity"  element = {<JoinCommunity/>}/>
+ <Route path="/post"  element = {<Post/>}/>
  <Route path="*"  element = {<h1 style={{color : "grey"}}>404 Page Not Found</h1>}/>
 
  

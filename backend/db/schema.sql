@@ -67,6 +67,39 @@ CREATE TABLE public.members (
 
 
 --
+-- Name: posts; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.posts (
+    userid integer NOT NULL,
+    communityid integer NOT NULL,
+    postid integer NOT NULL,
+    post_content text NOT NULL,
+    posted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+
+--
+-- Name: post_postid_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.post_postid_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: post_postid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.post_postid_seq OWNED BY public.posts.postid;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -117,6 +150,13 @@ ALTER TABLE ONLY public.community ALTER COLUMN community_id SET DEFAULT nextval(
 
 
 --
+-- Name: posts postid; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts ALTER COLUMN postid SET DEFAULT nextval('public.post_postid_seq'::regclass);
+
+
+--
 -- Name: users userid; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -137,6 +177,14 @@ ALTER TABLE ONLY public.community
 
 ALTER TABLE ONLY public.members
     ADD CONSTRAINT members_pkey PRIMARY KEY (userid, community_id);
+
+
+--
+-- Name: posts post_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT post_pkey PRIMARY KEY (postid);
 
 
 --
@@ -188,6 +236,22 @@ ALTER TABLE ONLY public.members
 
 
 --
+-- Name: posts post_communityid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT post_communityid_fkey FOREIGN KEY (communityid) REFERENCES public.community(community_id);
+
+
+--
+-- Name: posts post_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.posts
+    ADD CONSTRAINT post_userid_fkey FOREIGN KEY (userid) REFERENCES public.users(userid);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -206,4 +270,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('005'),
     ('006'),
     ('007'),
-    ('008');
+    ('008'),
+    ('009'),
+    ('010');

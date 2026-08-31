@@ -4,12 +4,20 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 
-
 function Homepage() {
 
     const navigate = useNavigate();
 
     let [communityname, setcommunityname] = useState([]);
+
+
+    function postInCommunity(communityid , communityname) {
+
+        // toast(communityid)
+        navigate("/post" , {state : {communityid : communityid , communityname : communityname}})
+        
+        
+    }
 
     async function fetchMyCommunties() {
 
@@ -105,9 +113,11 @@ function Homepage() {
 
             communityname.map((name) => {
 
+                
+
                 return <div key={name.community_id} style={{display : "inline-block"}}>
 
-                    <Link className="common-links">{name?.community_name}</Link>
+                    <button onClick={() => postInCommunity(name?.community_id , name?.community_name)} className="common-links">{name?.community_name} </button>
 
                 </div>
 
